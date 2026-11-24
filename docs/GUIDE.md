@@ -40,7 +40,7 @@ This guide walks you through building the engine sound module for the 1:7 RC Pis
 | Power | 7 to 18 V, i.e. 2S to 4S LiPo, e.g. branched off the drive battery |
 | 2 × servo lead | 2.54 mm female (JR/Futaba) to the receiver; only the signal is used |
 | 4 × socket head screw M2 × 16 | DIN 912 / ISO 4762, for the enclosure |
-| Micro USB cable | must carry **data**, charge-only cables do not work |
+| USB cable that fits your ESP32 | must carry **data**, charge-only cables do not work |
 | Computer with Chrome or Edge | Windows, macOS, Linux or ChromeOS; Safari, Firefox and phones do not work |
 | 4x3D Universal Receiver with Xbox controller | firmware v1.31, configuration Snowcat Config V1.3 |
 

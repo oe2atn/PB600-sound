@@ -40,7 +40,7 @@ Diese Anleitung führt Schritt für Schritt durch den Nachbau des Soundmoduls f�
 | Stromversorgung | 7 bis 18 V, also 2S bis 4S LiPo, z.B. vom Fahrakku abgezweigt |
 | 2 × Servokabel | Buchse 2,54 mm (JR/Futaba) zum Empfänger; benutzt wird nur das Signal |
 | 4 × Zylinderkopfschraube M2 × 16 | DIN 912 / ISO 4762, für das Gehäuse |
-| Micro-USB-Kabel | muss **Daten** übertragen, reine Ladekabel gehen nicht |
+| Passendes USB-Kabel für den ESP32 | muss **Daten** übertragen, reine Ladekabel gehen nicht |
 | Computer mit Chrome oder Edge | Windows, macOS, Linux oder ChromeOS; Safari, Firefox und Handys gehen nicht |
 | 4x3D Universal Receiver mit Xbox-Controller | Firmware v1.31, Konfiguration Snowcat Config V1.3 |
 
