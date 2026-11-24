@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="robots" content="noindex">
+<meta name="description" content="PB600 Sound Setup: Lautstärke und Motor des PB600-Soundmoduls per USB im Browser einstellen.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23000%22/%3E%3Ctext%20x%3D%2232%22%20y%3D%2242%22%20text-anchor%3D%22middle%22%20font-family%3D%22Helvetica%2CArial%2Csans-serif%22%20font-weight%3D%22800%22%20font-size%3D%2226%22%20fill%3D%22%23fff%22%3EPB%3C/text%3E%3C/svg%3E">
+<title>PB600 Sound Setup</title>
+<style>
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:#000;color:#fff;overflow:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;display:flex;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh}
+.bg{position:fixed;inset:-20%;z-index:0;filter:blur(70px);opacity:.85}
+.bg span{position:absolute;border-radius:50%;mix-blend-mode:screen}
+.b1{width:55vmax;height:55vmax;left:5%;top:10%;background:radial-gradient(circle,#ff2d78 0%,rgba(255,45,120,0) 65%);animation:m1 22s ease-in-out infinite alternate}
+.b2{width:60vmax;height:60vmax;right:0;top:25%;background:radial-gradient(circle,#5b3cff 0%,rgba(91,60,255,0) 65%);animation:m2 26s ease-in-out infinite alternate}
+.b3{width:50vmax;height:50vmax;left:30%;bottom:0;background:radial-gradient(circle,#00c2ff 0%,rgba(0,194,255,0) 65%);animation:m3 30s ease-in-out infinite alternate}
+.b4{width:35vmax;height:35vmax;left:45%;top:5%;background:radial-gradient(circle,#ff8a00 0%,rgba(255,138,0,0) 65%);opacity:.6;animation:m1 34s ease-in-out infinite alternate-reverse}
+@keyframes m1{to{transform:translate(18vmax,12vmax) scale(1.15)}}
+@keyframes m2{to{transform:translate(-20vmax,-10vmax) scale(.9)}}
+@keyframes m3{to{transform:translate(-12vmax,-18vmax) scale(1.1)}}
+.vignette{position:fixed;inset:0;z-index:1;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 30%,rgba(0,0,0,.75) 100%)}
+main{position:relative;z-index:2;text-align:center;padding:24px}
+.logo{display:block;margin:0 auto;height:clamp(100px,28vw,310px);width:auto;overflow:visible;filter:drop-shadow(0 10px 40px rgba(0,0,0,.25))}
+.info{margin-top:clamp(24px,5vh,48px)}
+.code{font-size:clamp(22px,4vw,32px);font-weight:700;letter-spacing:.3em;padding-left:.3em;color:rgba(255,255,255,.9)}
+.title{margin-top:8px;font-size:clamp(17px,2.6vw,22px);font-weight:600}
+.info p{margin:8px auto 0;max-width:420px;font-size:15px;line-height:1.45;color:rgba(255,255,255,.65)}
+.tag{margin-top:clamp(20px,4vh,40px);display:flex;align-items:center;justify-content:center;gap:clamp(10px,2vw,18px);font-size:clamp(17px,2.8vw,24px);font-weight:600;letter-spacing:.04em;color:rgba(255,255,255,.88)}
+.tag .dot{color:rgba(255,255,255,.45)}
+.tag svg{width:1.15em;height:1.15em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-reduced-motion:reduce){.bg span{animation:none}}
+html,body{overflow:auto}
+body{display:block}
+main{max-width:640px;margin:0 auto;padding:clamp(32px,8vh,72px) 20px 48px;text-align:left}
+.top{display:block;width:clamp(120px,30vw,180px);margin:0 auto 36px}
+.top .logo{height:auto;width:100%}
+.card{background:rgba(20,20,28,.55);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:clamp(22px,4vw,36px);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+h1{font-size:28px;font-weight:800;letter-spacing:-.01em;margin-bottom:20px}
+h2{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55);margin:26px 0 8px}
+p,address{font-size:16px;line-height:1.55;color:rgba(255,255,255,.85);font-style:normal}
+a{color:#fff;text-decoration-color:rgba(255,255,255,.4);text-underline-offset:3px}
+.ph{background:rgba(255,200,0,.18);border-radius:4px;padding:0 4px}
+.back{display:inline-block;margin-top:28px;font-size:15px;color:rgba(255,255,255,.7);text-decoration:none}
+.back:hover{color:#fff}
+.lead{margin-bottom:14px}
+.file{display:flex;gap:16px;align-items:flex-start;padding:20px 0;border-top:1px solid rgba(255,255,255,.1)}
+.file:first-of-type{border-top:0;padding-top:8px}
+.file .ic{flex:none;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(255,45,120,.35),rgba(91,60,255,.35) 55%,rgba(0,194,255,.35));border:1px solid rgba(255,255,255,.14)}
+.file svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.file h3{font-size:18px;font-weight:700;letter-spacing:-.01em}
+.file p{margin-top:4px;font-size:15px;color:rgba(255,255,255,.7)}
+.file .meta{font-size:13px;color:rgba(255,255,255,.45);margin-top:6px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);transition:background .15s,transform .1s}
+.btn:hover{background:rgba(255,255,255,.2)}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:#fff;color:#000;border-color:#fff}
+.btn.pri:hover{background:rgba(255,255,255,.85)}
+.btn svg{width:16px;height:16px}
+@media (max-width:480px){.file{gap:12px}.file .ic{width:36px;height:36px;border-radius:10px}.file svg{width:18px;height:18px}.btn{padding:0 12px;font-size:13px}}
+
+html,body{height:auto;overflow:visible}
+main{max-width:720px}
+.card+.card,#ui .card{margin-top:16px}
+.lead{font-size:16px;line-height:1.55;color:rgba(255,255,255,.8);margin-bottom:18px}
+.btn{cursor:pointer;font-family:inherit}
+.btn.lg{height:44px;padding:0 22px;font-size:15px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.lang{position:absolute;top:max(16px,env(safe-area-inset-top));right:16px;z-index:3;display:flex;padding:3px;border-radius:999px;background:rgba(20,20,28,.55);border:1px solid rgba(255,255,255,.14);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+.lang a{min-width:40px;height:30px;display:grid;place-items:center;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:.06em;color:rgba(255,255,255,.6);text-decoration:none}
+.lang a:hover{color:#fff}.lang a[aria-current]{background:#fff;color:#000}
+.conn{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px}
+.pill{display:inline-flex;align-items:center;gap:8px;height:30px;padding:0 12px;border-radius:999px;font-size:13px;font-weight:600;color:rgba(255,255,255,.75);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)}
+.pill i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35)}
+.pill.on i{background:#3ddc84;box-shadow:0 0 8px #3ddc84}
+.pill.wait i{background:#ffb020;box-shadow:0 0 8px #ffb020}
+.steps{counter-reset:s;list-style:none;margin-top:18px}
+.steps li{counter-increment:s;position:relative;padding:6px 0 6px 36px;font-size:14.5px;line-height:1.5;color:rgba(255,255,255,.78)}
+.steps li::before{content:counter(s);position:absolute;left:0;top:6px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18)}
+.msg{margin-top:12px;font-size:14px;color:rgba(255,255,255,.75);min-height:1em}
+.msg.err{color:#ff7a9f}
+.warn{margin:0 0 16px;padding:12px 16px;border-radius:12px;background:rgba(255,176,32,.14);border:1px solid rgba(255,176,32,.4);font-size:14.5px;line-height:1.5}
+#ui h2:first-child{margin-top:0}
+.live{display:grid;gap:10px;margin-top:6px}
+.lrow{display:grid;grid-template-columns:92px 1fr 78px;align-items:center;gap:12px;font-size:14px;color:rgba(255,255,255,.7)}
+.lrow code,.cal code{font-family:ui-monospace,Menlo,monospace;font-size:13px;color:#fff;text-align:right}
+.bar{position:relative;height:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+.bar b{position:absolute;top:0;bottom:0;left:0;width:0;border-radius:999px;background:linear-gradient(90deg,#ff2d78,#5b3cff 55%,#00c2ff);transition:width .1s,left .1s}
+.bar.c u{position:absolute;left:50%;top:-2px;bottom:-2px;width:2px;background:rgba(255,255,255,.5)}
+.note{margin-top:12px;font-size:13.5px;line-height:1.5;color:rgba(255,255,255,.55)}
+.note b{color:#fff}
+.sliders{display:grid;gap:4px}
+.srow{display:grid;grid-template-columns:minmax(120px,1.1fr) 2fr 56px 28px;align-items:center;gap:12px;padding:8px 0;border-top:1px solid rgba(255,255,255,.07);cursor:default}
+.srow:first-child{border-top:0}
+.sl{display:flex;flex-direction:column;gap:2px}
+.sl b{font-size:14.5px;font-weight:600;color:rgba(255,255,255,.9)}
+.sl small{font-size:12px;color:rgba(255,255,255,.45)}
+.srow output{font-family:ui-monospace,Menlo,monospace;font-size:13.5px;text-align:right;color:rgba(255,255,255,.8)}
+.srow.chg output{color:#fff;font-weight:700}
+.rst{width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,.14);background:transparent;color:rgba(255,255,255,.5);cursor:pointer;font-size:14px;visibility:hidden}
+.srow.chg .rst{visibility:visible}.rst:hover{color:#fff;border-color:rgba(255,255,255,.4)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:rgba(255,255,255,.14)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;margin-top:-7px;border-radius:50%;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.5)}
+input[type=range]::-moz-range-track{height:6px;border-radius:999px;background:rgba(255,255,255,.14)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border:0;border-radius:50%;background:#fff}
+input[type=range]:focus-visible{outline:2px solid #fff;outline-offset:4px;border-radius:6px}
+.cal{display:grid;gap:10px;margin-top:14px}
+.cal div{display:grid;grid-template-columns:1fr 90px auto;align-items:center;gap:12px;font-size:14.5px;color:rgba(255,255,255,.85)}
+.saverow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.saverow .btns{display:flex;flex-wrap:wrap;gap:8px}
+.compat{margin:0 0 22px;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12)}
+.compat-h{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 12px;margin-bottom:10px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+.compat-me{font-size:12.5px;letter-spacing:.02em;text-transform:none;padding:3px 10px;border-radius:999px}
+.compat-me.ok{background:rgba(52,199,89,.16);color:#6ee38f}.compat-me.no{background:rgba(255,69,58,.16);color:#ff8a80}
+.compat-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}.compat-row+.compat-row{margin-top:7px}
+.chip{display:inline-flex;align-items:center;height:28px;padding:0 11px;border-radius:999px;font-size:13.5px;font-weight:600;white-space:nowrap}
+.chip.ok{background:rgba(255,255,255,.92);color:#000}.chip.no{color:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.14)}
+.compat-os{font-size:13px;color:rgba(255,255,255,.6)}
+@media (max-width:420px){.pnav a{padding:0 12px;font-size:13.5px}}
+.imp{position:fixed;inset:0;margin:auto;height:fit-content;padding:0;border:0;background:transparent;max-width:min(640px,calc(100vw - 32px));width:100%;max-height:calc(100dvh - 48px);color:#fff}
+.imp::backdrop{background:rgba(0,0,0,.6);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.imp-box{position:relative;max-height:calc(100dvh - 48px);overflow:auto;padding:30px 28px 26px;border-radius:22px;background:rgba(22,24,32,.96);border:1px solid rgba(255,255,255,.14);box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.imp-x{position:absolute;z-index:3;top:14px;right:14px;width:34px;height:34px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;font-size:15px;cursor:pointer}
+.imp-x:hover{background:rgba(255,255,255,.16)}
+.imp-body .card{background:none;border:0;box-shadow:none;padding:0;margin:0;-webkit-backdrop-filter:none;backdrop-filter:none;border-radius:0}
+.imp-body address{font-style:normal;margin:0 0 10px}
+.imp-body{font-size:15px;line-height:1.6;color:rgba(255,255,255,.82)}
+.imp-body h1{font-size:26px;margin:0 44px 14px 0;color:#fff;line-height:1.2}
+.imp-body h2,.imp-body h3{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55);margin:22px 0 6px}
+.imp-body p{margin:0 0 10px}.imp-body a{color:#fff}
+.imp-body ul{padding-left:20px;margin:0 0 10px}
+.pnav{display:flex;justify-content:center;margin:-14px auto 30px}
+.pnav div{display:flex;padding:3px;border-radius:999px;background:rgba(20,20,28,.55);border:1px solid rgba(255,255,255,.14);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+.pnav a{padding:0 18px;height:34px;display:grid;place-items:center;border-radius:999px;font-size:14px;font-weight:600;letter-spacing:.02em;color:rgba(255,255,255,.65);text-decoration:none;white-space:nowrap;transition:background .15s,color .15s}
+.pnav a:hover{color:#fff}.pnav a[aria-current]{background:#fff;color:#000}
+.foot{display:flex;justify-content:center;gap:.7em;margin-top:30px;font-size:13px;letter-spacing:.06em;color:rgba(255,255,255,.45)}
+.foot a{color:inherit;text-decoration:none}.foot a:hover{color:#fff}
+.diag{margin-top:14px}.diag summary{cursor:pointer;font-size:13px;color:rgba(255,255,255,.5)}.diag summary:hover{color:#fff}
+.diag pre{margin:10px 0;max-height:260px;overflow:auto;padding:10px 12px;border-radius:10px;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.1);font:12px/1.45 ui-monospace,Menlo,monospace;color:rgba(255,255,255,.8);white-space:pre-wrap;word-break:break-all}
+#fwcard{margin-top:16px}#fwcard h2:first-child{margin-top:0}
+.fwinfo{display:flex;flex-wrap:wrap;gap:6px 24px;margin:14px 0 4px;font-size:14.5px;color:rgba(255,255,255,.7)}
+.fwinfo b{color:#fff;font-family:ui-monospace,Menlo,monospace;font-size:14px}
+.fwmode{display:grid;gap:8px;margin:12px 0 16px}
+.fwmode label{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);cursor:pointer}
+.fwmode label:has(input:checked){border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.09)}
+.fwmode input{margin-top:3px;accent-color:#fff;width:16px;height:16px}
+.fwmode span{display:flex;flex-direction:column;gap:2px}
+.fwmode b{font-size:14.5px}.fwmode small{font-size:12.5px;color:rgba(255,255,255,.55)}
+.fwbar{margin-top:16px}
+.note.tiny{font-size:12px;color:rgba(255,255,255,.35)}
+@media (max-width:560px){.srow{grid-template-columns:1fr 50px 28px}.srow input{grid-column:1/-1;grid-row:2}.lrow{grid-template-columns:70px 1fr 66px}.cal div{grid-template-columns:1fr auto}.cal code{grid-column:2;grid-row:1}.cal .btn{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><span class="b1"></span><span class="b2"></span><span class="b3"></span><span class="b4"></span></div>
+<div class="vignette" aria-hidden="true"></div>
+<main>
+
+<nav class="lang" aria-label="Sprache / Language"><a href="?lang=de" data-l="de">DE</a><a href="?lang=en" data-l="en">EN</a></nav>
+<nav class="pnav" aria-label="PB600 Sound"><div><a href="https://github.com/oe2atn/PB600-sound">GitHub</a><a href="./" aria-current="page" data-t="nav_setup"></a></div></nav>
+
+<div class="card">
+<div class="compat" id="compat">
+<div class="compat-h"><span data-t="cmp_h"></span><span class="compat-me" id="compatMe"></span></div>
+<div class="compat-row"><span class="chip ok">✓ Google Chrome</span><span class="chip ok">✓ Microsoft Edge</span><span class="chip ok">✓ Opera</span><span class="compat-os" data-t="cmp_os"></span></div>
+<div class="compat-row"><span class="chip no">✕ Safari</span><span class="chip no">✕ Firefox</span><span class="chip no" data-t="cmp_mobile"></span></div>
+</div>
+<h1 data-t="title">PB600 Sound Setup</h1>
+<p class="lead" data-t="lead"></p>
+<div class="warn" id="noserial" hidden data-t="noserial"></div>
+<div class="conn">
+<button class="btn pri lg" id="btnConnect" type="button" data-t="connect"></button>
+<span class="pill" id="status"><i></i><span data-t="st_off"></span></span>
+</div>
+<ol class="steps small" id="howto">
+<li data-t="h1"></li><li data-t="h2"></li><li data-t="h3"></li><li data-t="h4"></li><li data-t="h5"></li>
+</ol>
+<p class="msg" id="msg" role="status" aria-live="polite"></p>
+<details class="diag" id="diag"><summary data-t="diag"></summary>
+<p class="note" data-t="diag_txt"></p>
+<pre id="log"></pre>
+<button class="btn" type="button" id="btnCopy" data-t="diag_copy"></button>
+</details>
+</div>
+
+<div id="ui" hidden>
+<div class="card">
+<h2 data-t="sec_live"></h2>
+<div class="live">
+<div class="lrow"><span data-t="lv_thr"></span><div class="bar c"><b id="barThr"></b><u></u></div><code id="vThr">–</code></div>
+<div class="lrow"><span data-t="lv_fn"></span><div class="bar c"><b id="barFn"></b><u></u></div><code id="vFn">–</code></div>
+<div class="lrow"><span data-t="lv_gas"></span><div class="bar"><b id="barGas"></b></div><code id="vGas">–</code></div>
+<div class="lrow"><span data-t="lv_rpm"></span><div class="bar"><b id="barRpm"></b></div><code id="vRpm">–</code></div>
+</div>
+<p class="note"><span data-t="lv_eng"></span> <b id="vRun">–</b></p>
+</div>
+
+<div class="card">
+<h2 data-t="sec_vol"></h2>
+<div class="sliders" id="grpVol"></div>
+<h2 data-t="sec_eng"></h2>
+<div class="sliders" id="grpEng"></div>
+</div>
+
+<div class="card">
+<h2 data-t="sec_cal"></h2>
+<p class="note" data-t="cal_txt"></p>
+<div class="cal">
+<div><span data-t="cal_fwd"></span><code id="vFwd">–</code><button class="btn" type="button" id="btnCalF" data-t="cal_take"></button></div>
+<div><span data-t="cal_rev"></span><code id="vRev">–</code><button class="btn" type="button" id="btnCalR" data-t="cal_take"></button></div>
+</div>
+</div>
+
+<div class="card save">
+<div class="saverow">
+<span class="pill" id="dirty"><i></i><span id="dirtyTxt"></span></span>
+<div class="btns">
+<button class="btn" type="button" id="btnDefaults" data-t="defaults"></button>
+<button class="btn" type="button" id="btnReload" data-t="reload"></button>
+<button class="btn pri lg" type="button" id="btnSave" data-t="save"></button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="card" id="fwcard">
+<h2 data-t="sec_fw"></h2>
+<p class="note" data-t="fw_txt"></p>
+<div class="fwinfo"><span><span data-t="fw_srv"></span> <b id="fwSrv">–</b></span><span><span data-t="fw_dev"></span> <b id="fwDev">–</b></span></div>
+<div class="fwmode" role="radiogroup">
+<label><input type="radio" name="fwm" value="update" checked><span><b data-t="fw_upd"></b><small data-t="fw_upd_h"></small></span></label>
+<label><input type="radio" name="fwm" value="full"><span><b data-t="fw_full"></b><small data-t="fw_full_h"></small></span></label>
+</div>
+<div class="conn"><button class="btn pri lg" type="button" id="btnFlash" data-t="fw_go"></button></div>
+<div class="bar fwbar" id="fwBar" hidden><b id="fwProg"></b></div>
+<p class="msg" id="fwMsg" role="status" aria-live="polite"></p>
+<p class="note tiny" data-t="fw_lic"></p>
+</div>
+
+<nav class="foot"><a href="https://github.com/oe2atn/PB600-sound">github.com/oe2atn/PB600-sound</a></nav>
+</main>
+
+<script>
+(function () {
+'use strict';
+var T = {
+de: {
+ title: 'PB600 Sound Setup',
+ lead: 'Lautstärken, Drehzahl und Gas-Endpunkte deines PB600-Soundmoduls direkt im Browser einstellen. Das Modul wird dazu per USB an den Computer angesteckt; der Lautsprecher spielt mit, du hörst jede Änderung sofort.',
+ cmp_h: 'Kompatible Browser', cmp_os: 'am Computer (Windows, macOS, Linux, ChromeOS)', cmp_mobile: '✕ Handy und Tablet', cmp_yes: '✓ dein Browser passt', cmp_no: '✕ dein Browser kann es nicht',
+ noserial: 'Dieser Browser kann nicht mit USB-Geräten sprechen. Bitte Chrome oder Edge am Computer verwenden (nicht Safari, Firefox oder Handy).',
+ connect: 'Verbinden', disconnect: 'Trennen',
+ st_off: 'nicht verbunden', st_wait: 'verbinde …', st_on: 'verbunden', st_fw: 'Firmware',
+ h1: 'Modell ausgeschaltet lassen: LiPo noch nicht anstecken.',
+ h2: 'ESP32 des Soundmoduls per USB-Kabel an den Computer anstecken.',
+ h3: '„Verbinden“ klicken, den Eintrag mit „USB“, „CP210x“ oder „usbserial“ wählen und warten, bis „verbunden“ angezeigt wird.',
+ h4: 'Erst jetzt den LiPo anstecken. Diese Reihenfolge ist wichtig, sonst kommt keine Verbindung zustande.',
+ h5: 'Werte einstellen, anhören, dann „Im Modul speichern“.',
+ m_noresp: 'Keine Antwort vom Modul. Bitte LiPo abstecken, USB abziehen und wieder anstecken, neu verbinden und erst danach den LiPo anstecken. Hilft das nicht: unten die Firmware aktualisieren.',
+ m_lost: 'Verbindung getrennt.', m_saved: 'Im Modul gespeichert.', m_defaults: 'Werkseinstellungen geladen. Zum Übernehmen speichern.',
+ m_reloaded: 'Gespeicherte Werte neu geladen.', m_calerr: 'Gas-Ausschlag außerhalb des gültigen Bereichs (%s µs). Knüppel ganz durchziehen und nochmal versuchen.',
+ m_busy: 'Der Anschluss ist belegt. Ist noch ein anderes Programm (z.B. Arduino, PlatformIO oder ein zweiter Tab) verbunden?',
+ sec_live: 'Live vom Empfänger', lv_thr: 'Gas', lv_fn: 'Funktion', lv_gas: 'Gas %', lv_rpm: 'Drehzahl', lv_eng: 'Motor:', run1: 'läuft', run0: 'aus',
+ sec_vol: 'Lautstärke', sec_eng: 'Motor',
+ k_master: 'Gesamt', k_master_h: 'über 100 % kann es verzerren',
+ k_idle: 'Motor im Leerlauf', k_full: 'Motor bei Vollgas', k_start: 'Anlassen', k_stop: 'Abstellen', k_horn: 'Hupe', k_beep: 'Rückfahrpieper',
+ k_rpm: 'Höchste Drehzahl', k_rpm_h: '100 % = Tonhöhe bleibt gleich', k_rise: 'Hochdrehen', k_rise_h: '1 = träge, 10 = sofort', k_fall: 'Drehzahl abfallen', k_fall_h: '1 = langsam, 20 = sofort',
+ sec_cal: 'Gas-Endpunkte', cal_txt: 'Damit vorwärts und rückwärts gleich laut und gleich hoch drehen: Knüppel ganz nach vorne halten und „Übernehmen“ klicken, dann ganz nach hinten halten und „Übernehmen“ klicken.',
+ cal_fwd: 'Vollgas vorwärts', cal_rev: 'Vollgas rückwärts', cal_take: 'Übernehmen',
+ defaults: 'Werkseinstellungen', reload: 'Gespeichertes laden', save: 'Im Modul speichern',
+ d_clean: 'alles gespeichert', d_dirty: 'nicht gespeichert',
+ home: 'Startseite', nav_home: 'Welcome', nav_setup: 'Modul Setup', imprint: 'Impressum', close: 'Schließen', unsaved: 'Es gibt nicht gespeicherte Änderungen. Trotzdem trennen?',
+ sec_fw: 'Firmware aktualisieren', fw_txt: 'Spielt die neueste Firmware direkt von hier auf das Modul. Klappt auch, wenn das Modul noch eine alte Firmware hat oder sich oben nicht verbinden lässt.',
+ fw_srv: 'Neueste Version:', fw_dev: 'Im Modul:', fw_unknown: 'unbekannt',
+ fw_upd: 'Update', fw_upd_h: 'deine Einstellungen bleiben erhalten (empfohlen)',
+ fw_full: 'Komplett neu', fw_full_h: 'löscht alle Einstellungen, für ein leeres oder defektes Modul',
+ fw_go: 'Firmware aufspielen', fw_confirm: 'Firmware %s jetzt aufspielen? Das Modul während des Vorgangs nicht abstecken.',
+ fw_unsaved: 'Es gibt nicht gespeicherte Änderungen. Diese gehen beim Aufspielen verloren. Weiter?',
+ fw_dl: 'Lade Firmware vom Server …', fw_con: 'Verbinde mit dem Bootloader …', fw_wr: 'Schreibe … %s %', fw_rs: 'Starte das Modul neu …',
+ fw_ok: 'Fertig! Firmware %s ist aufgespielt.', fw_okre: 'Fertig! Firmware %s ist aufgespielt. Verbinde neu …',
+ fw_errdl: 'Die Firmware konnte nicht vom Server geladen werden. Internetverbindung prüfen.',
+ fw_errcon: 'Keine Verbindung zum Bootloader. Halte die BOOT-Taste am ESP32 gedrückt, klicke nochmal auf „Firmware aufspielen“ und lass die Taste los, sobald der Fortschritt losläuft.',
+ fw_err: 'Fehler beim Aufspielen: %s. USB kurz abziehen und nochmal versuchen; im Zweifel „Komplett neu“ wählen.',
+ fw_lic: 'Flash-Werkzeug: esptool-js von Espressif, Apache-2.0-Lizenz.',
+ fw_new: 'Für dein Modul gibt es eine neuere Firmware (%s). Bitte unten aufspielen.',
+ m_restart: 'Das Modul ist gerade neu gestartet. Nicht gespeicherte Werte sind dabei verloren gegangen.',
+ m_lipo: 'Verbunden. Jetzt den LiPo anstecken.', m_saving: 'Speichere …', m_saveerr: 'Das Modul konnte nicht speichern (Fehler %s). Bitte das Diagnose-Protokoll kopieren und schicken.', m_retry: 'Keine Antwort, versuche es nochmal …',
+ diag: 'Diagnose-Protokoll', diag_txt: 'Alles, was das Modul über USB sendet. Bei Problemen kopieren und mitschicken.', diag_copy: 'Protokoll kopieren', diag_copied: 'kopiert', m_savefail: 'Speichern hat nicht geklappt: keine Bestätigung vom Modul. Bitte die neueste Firmware aufspielen (unten) und nochmal versuchen.'
+},
+en: {
+ title: 'PB600 Sound Setup',
+ lead: 'Adjust volumes, engine rpm and throttle endpoints of your PB600 sound module right in the browser. Plug the module into your computer via USB; the speaker keeps playing, so you hear every change immediately.',
+ cmp_h: 'Compatible browsers', cmp_os: 'on a computer (Windows, macOS, Linux, ChromeOS)', cmp_mobile: '✕ phones and tablets', cmp_yes: '✓ your browser works', cmp_no: '✕ your browser cannot do this',
+ noserial: 'This browser cannot talk to USB devices. Please use Chrome or Edge on a computer (not Safari, Firefox or a phone).',
+ connect: 'Connect', disconnect: 'Disconnect',
+ st_off: 'not connected', st_wait: 'connecting …', st_on: 'connected', st_fw: 'Firmware',
+ h1: 'Keep the model switched off: do not plug in the LiPo yet.',
+ h2: 'Plug the ESP32 of the sound module into your computer with a USB cable.',
+ h3: 'Click “Connect”, choose the entry with “USB”, “CP210x” or “usbserial” and wait until “connected” is shown.',
+ h4: 'Only now plug in the LiPo. This order matters, otherwise no connection is made.',
+ h5: 'Adjust, listen, then “Save to module”.',
+ m_noresp: 'No answer from the module. Unplug the LiPo, unplug and replug USB, connect again and only then plug in the LiPo. If that does not help: update the firmware below.',
+ m_lost: 'Disconnected.', m_saved: 'Saved to the module.', m_defaults: 'Factory settings loaded. Save to keep them.',
+ m_reloaded: 'Saved values reloaded.', m_calerr: 'Throttle position out of range (%s µs). Push the stick all the way and try again.',
+ m_busy: 'The port is busy. Is another program (e.g. Arduino, PlatformIO or a second tab) connected?',
+ sec_live: 'Live from the receiver', lv_thr: 'Throttle', lv_fn: 'Function', lv_gas: 'Throttle %', lv_rpm: 'Engine rpm', lv_eng: 'Engine:', run1: 'running', run0: 'off',
+ sec_vol: 'Volume', sec_eng: 'Engine',
+ k_master: 'Master', k_master_h: 'above 100 % may distort',
+ k_idle: 'Engine at idle', k_full: 'Engine at full throttle', k_start: 'Start', k_stop: 'Shutdown', k_horn: 'Horn', k_beep: 'Reversing beep',
+ k_rpm: 'Maximum rpm', k_rpm_h: '100 % = pitch stays the same', k_rise: 'Rev up', k_rise_h: '1 = sluggish, 10 = instant', k_fall: 'Rev down', k_fall_h: '1 = slow, 20 = instant',
+ sec_cal: 'Throttle endpoints', cal_txt: 'So that forward and reverse sound equally loud and rev equally high: hold the stick fully forward and click “Take”, then hold it fully back and click “Take”.',
+ cal_fwd: 'Full throttle forward', cal_rev: 'Full throttle reverse', cal_take: 'Take',
+ defaults: 'Factory settings', reload: 'Load saved', save: 'Save to module',
+ d_clean: 'all saved', d_dirty: 'not saved',
+ home: 'Home', nav_home: 'Welcome', nav_setup: 'Module Setup', imprint: 'Imprint', close: 'Close', unsaved: 'There are unsaved changes. Disconnect anyway?',
+ sec_fw: 'Update firmware', fw_txt: 'Installs the latest firmware on the module right from here. Also works if the module still runs an old firmware or will not connect above.',
+ fw_srv: 'Latest version:', fw_dev: 'On the module:', fw_unknown: 'unknown',
+ fw_upd: 'Update', fw_upd_h: 'keeps your settings (recommended)',
+ fw_full: 'Full install', fw_full_h: 'erases all settings, for a blank or broken module',
+ fw_go: 'Install firmware', fw_confirm: 'Install firmware %s now? Do not unplug the module during the process.',
+ fw_unsaved: 'There are unsaved changes. They will be lost when installing. Continue?',
+ fw_dl: 'Downloading firmware …', fw_con: 'Connecting to the bootloader …', fw_wr: 'Writing … %s %', fw_rs: 'Restarting the module …',
+ fw_ok: 'Done! Firmware %s is installed.', fw_okre: 'Done! Firmware %s is installed. Reconnecting …',
+ fw_errdl: 'Could not download the firmware. Check your internet connection.',
+ fw_errcon: 'No connection to the bootloader. Hold the BOOT button on the ESP32, click “Install firmware” again and release the button as soon as progress starts.',
+ fw_err: 'Installation failed: %s. Unplug USB briefly and try again; if in doubt choose “Full install”.',
+ fw_lic: 'Flash tool: esptool-js by Espressif, Apache 2.0 licence.',
+ fw_new: 'A newer firmware is available for your module (%s). Please install it below.',
+ m_restart: 'The module has just restarted. Unsaved values were lost.',
+ m_lipo: 'Connected. Now plug in the LiPo.', m_saving: 'Saving …', m_saveerr: 'The module could not save (error %s). Please copy the diagnostic log and send it.', m_retry: 'No answer, trying again …',
+ diag: 'Diagnostic log', diag_txt: 'Everything the module sends over USB. Copy it and send it along if there are problems.', diag_copy: 'Copy log', diag_copied: 'copied', m_savefail: 'Saving failed: no confirmation from the module. Please install the latest firmware (below) and try again.'
+}};
+var SLIDERS = {
+ grpVol: [['master', '%'], ['idle', '%'], ['full', '%'], ['start', '%'], ['stop', '%'], ['horn', '%'], ['beep', '%']],
+ grpEng: [['rpm', '%'], ['rise', ''], ['fall', '']]
+};
+var L = (function () {
+  var q = new URLSearchParams(location.search).get('lang');
+  if (q === 'de' || q === 'en') return q;
+  return (navigator.language || 'de').toLowerCase().indexOf('de') === 0 ? 'de' : 'en';
+})();
+var t = function (k) { return (T[L][k] !== undefined) ? T[L][k] : k; };
+var $ = function (id) { return document.getElementById(id); };
+document.documentElement.lang = L;
+document.querySelectorAll('[data-t]').forEach(function (el) { el.textContent = t(el.dataset.t); });
+document.querySelectorAll('[data-nav]').forEach(function (a) { a.href = a.dataset.nav + '?lang=' + L; });
+document.querySelectorAll('.lang a').forEach(function (a) { if (a.dataset.l === L) a.setAttribute('aria-current', 'true'); });
+
+var port = null, lastPort = null, flashing = false, restarted = false, saveTimer = null, reader = null, writer = null, cfg = {}, dirty = false, gotCfg = false, keepReading = false;
+var hasSerial = 'serial' in navigator;
+if (!hasSerial) { $('noserial').hidden = false; $('btnConnect').disabled = true; }
+$('compatMe').textContent = t(hasSerial ? 'cmp_yes' : 'cmp_no'); $('compatMe').className = 'compat-me ' + (hasSerial ? 'ok' : 'no');
+
+function msg(s, err) { var m = $('msg'); m.textContent = s || ''; m.className = 'msg' + (err ? ' err' : ''); }
+function status(state, extra) {
+  var p = $('status'); p.className = 'pill ' + state;
+  p.querySelector('span').textContent = t('st_' + state) + (extra ? ' · ' + extra : '');
+}
+function setDirty(d) {
+  dirty = d; $('dirty').className = 'pill ' + (d ? 'wait' : 'on');
+  $('dirtyTxt').textContent = t(d ? 'd_dirty' : 'd_clean');
+}
+function send(line) { logAdd('> ' + line); if (writer) return writer.write(new TextEncoder().encode(line + '\n')).catch(function () {}); }
+var sleep = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+
+// ---- Regler aufbauen ----
+var sendTimers = {};
+function buildSliders() {
+  Object.keys(SLIDERS).forEach(function (g) {
+    var box = $(g); box.innerHTML = '';
+    SLIDERS[g].forEach(function (s) {
+      var k = s[0], unit = s[1], c = cfg[k]; if (!c) return;
+      var row = document.createElement('label'); row.className = 'srow';
+      var hint = T[L]['k_' + k + '_h'];
+      row.innerHTML = '<span class="sl"><b></b>' + (hint ? '<small></small>' : '') + '</span>' +
+        '<input type="range" min="' + c[1] + '" max="' + c[2] + '" step="1" value="' + c[0] + '">' +
+        '<output></output><button type="button" class="rst" title="">↺</button>';
+      row.querySelector('b').textContent = t('k_' + k);
+      if (hint) row.querySelector('small').textContent = hint;
+      var inp = row.querySelector('input'), out = row.querySelector('output'), rst = row.querySelector('.rst');
+      rst.title = (L === 'de' ? 'Standard: ' : 'Default: ') + c[3] + unit;
+      var show = function () { out.textContent = inp.value + unit; row.classList.toggle('chg', +inp.value !== c[3]); };
+      inp.addEventListener('input', function () {
+        show(); setDirty(true);
+        clearTimeout(sendTimers[k]);
+        sendTimers[k] = setTimeout(function () { send('S ' + k + ' ' + inp.value); }, 60);
+      });
+      rst.addEventListener('click', function (e) { e.preventDefault(); inp.value = c[3]; inp.dispatchEvent(new Event('input')); });
+      inp.id = 's_' + k; show(); box.appendChild(row);
+    });
+  });
+  $('vFwd').textContent = cfg.fwd ? cfg.fwd[0] + ' µs' : '–';
+  $('vRev').textContent = cfg.rev ? cfg.rev[0] + ' µs' : '–';
+}
+
+// ---- Zeilen vom Modul ----
+var logLines = [];
+function logAdd(s) { logLines.push(new Date().toTimeString().slice(0, 8) + ' ' + s); if (logLines.length > 400) logLines.shift(); var el = $('log'); if ($('diag').open) { el.textContent = logLines.join('\n'); el.scrollTop = el.scrollHeight; } }
+function onLine(line) {
+  line = line.replace(/\r/g, ''); if (line.indexOf('PB:LIVE ') < 0) logAdd('< ' + line);
+  var i = line.indexOf('PB:'); if (i < 0) return; line = line.slice(i + 3).trim();
+  var sp = line.indexOf(' '), cmd = sp < 0 ? line : line.slice(0, sp), rest = sp < 0 ? '' : line.slice(sp + 1);
+  if (cmd === 'READY') { if (gotCfg) { restarted = true; failSave(); } send('?'); }
+  else if (cmd === 'CFG') {
+    try { cfg = JSON.parse(rest); } catch (e) { return; }
+    var first = !gotCfg; gotCfg = true;
+    status('on', t('st_fw') + ' ' + cfg.fw); $('fwDev').textContent = cfg.fw; buildSliders(); $('ui').hidden = false; $('howto').hidden = true;
+    if (first) { setDirty(false); send('L1'); msg(t('m_lipo')); }
+    else if (restarted) { restarted = false; setDirty(false); send('L1'); msg(t('m_restart'), true); }
+    if (fwInfo && cfg.fw !== fwInfo.version && verNum(cfg.fw) < verNum(fwInfo.version)) fwMsg(t('fw_new').replace('%s', fwInfo.version));
+  }
+  else if (cmd === 'OK') { var p = rest.split(' '); if (cfg[p[0]]) cfg[p[0]][0] = +p[1]; }
+  else if (cmd === 'SAVED') { clearTimeout(saveTimer); saveTimer = null; $('btnSave').disabled = false; setDirty(false); msg(t('m_saved')); }
+  else if (cmd === 'ERR' && rest.indexOf('save') === 0) { clearTimeout(saveTimer); saveTimer = null; $('btnSave').disabled = false; msg(t('m_saveerr').replace('%s', rest.slice(5)), true); }
+  else if (cmd === 'ERR' && rest.indexOf('cal') === 0) { msg(t('m_calerr').replace('%s', rest.split(' ')[1]), true); }
+  else if (cmd === 'LIVE') {
+    var d; try { d = JSON.parse(rest); } catch (e) { return; }
+    var pos = function (us) { return Math.max(0, Math.min(100, (us - 1000) / 10)); };
+    var cbar = function (el, us) { var p = pos(us); el.style.left = Math.min(p, 50) + '%'; el.style.width = Math.abs(p - 50) + '%'; };
+    cbar($('barThr'), d.thr); cbar($('barFn'), d.fn);
+    $('vThr').textContent = d.thr + ' µs'; $('vFn').textContent = d.fn + ' µs';
+    $('barGas').style.width = (d.t / 5) + '%'; $('vGas').textContent = Math.round(d.t / 5) + ' %';
+    $('barRpm').style.width = (d.rpm / 5) + '%'; $('vRpm').textContent = Math.round(d.rpm / 5) + ' %';
+    $('vRun').textContent = t(d.run ? 'run1' : 'run0');
+  }
+}
+
+async function readLoop() {
+  var dec = new TextDecoder(), buf = '';
+  while (port && port.readable && keepReading) {
+    reader = port.readable.getReader();
+    try {
+      for (;;) {
+        var r = await reader.read(); if (r.done) break;
+        buf += dec.decode(r.value, { stream: true });
+        var n; while ((n = buf.indexOf('\n')) >= 0) { onLine(buf.slice(0, n)); buf = buf.slice(n + 1); }
+        if (buf.length > 4096) buf = '';
+      }
+    } catch (e) { /* Gerät abgezogen */ }
+    finally { try { reader.releaseLock(); } catch (e) {} reader = null; }
+    if (!keepReading) break;
+    break;
+  }
+  if (keepReading) { await disconnect(true); msg(t('m_lost'), true); }
+}
+
+async function connect(known) {
+  msg('');
+  if (known) port = known;
+  else { try { port = await navigator.serial.requestPort(); } catch (e) { return; } }
+  lastPort = port;
+  try { await port.open({ baudRate: 115200 }); }
+  catch (e) { port = null; msg(t('m_busy'), true); return; }
+  status('wait'); $('btnConnect').textContent = t('disconnect'); gotCfg = false;
+  logAdd('-- verbunden, starte Modul neu');
+  await resetModule();
+  writer = port.writable.getWriter(); keepReading = true; readLoop();
+  if (await waitCfg(7)) return;
+  // 2. Versuch: Anschluss schließen, neu öffnen, nochmal neu starten (wie ein zweiter Klick)
+  if (!port) return;
+  msg(t('m_retry')); logAdd('-- keine Antwort, neuer Versuch');
+  var p = port; await disconnect(true); port = p; lastPort = p;
+  await sleep(300);
+  try { await port.open({ baudRate: 115200 }); } catch (e) { port = null; msg(t('m_busy'), true); return; }
+  status('wait'); $('btnConnect').textContent = t('disconnect');
+  await resetModule();
+  writer = port.writable.getWriter(); keepReading = true; readLoop();
+  if (await waitCfg(9)) return;
+  if (port) msg(t('m_noresp'), true);
+}
+// EN kurz auf Low (RTS), BOOT (DTR) bleibt High -> normaler Programmstart
+async function resetModule() {
+  try { await port.setSignals({ dataTerminalReady: false, requestToSend: false }); await sleep(50);
+        await port.setSignals({ dataTerminalReady: false, requestToSend: true }); await sleep(150);
+        await port.setSignals({ dataTerminalReady: false, requestToSend: false }); } catch (e) { logAdd('-- Reset nicht möglich: ' + e); }
+}
+async function waitCfg(sec) {
+  for (var i = 0; i < sec && !gotCfg && port; i++) { await sleep(1000); if (!gotCfg && port && i >= 1) send('?'); }
+  return gotCfg;
+}
+
+async function disconnect(silent) {
+  keepReading = false;
+  try { if (writer) { await send('L0'); writer.releaseLock(); } } catch (e) {}
+  writer = null;
+  try { if (reader) await reader.cancel(); } catch (e) {}
+  try { if (port) await port.close(); } catch (e) {}
+  port = null; gotCfg = false;
+  clearTimeout(saveTimer); saveTimer = null; $('btnSave').disabled = false;
+  status('off'); $('btnConnect').textContent = t('connect'); $('ui').hidden = true; $('howto').hidden = false;
+  if (!silent) msg('');
+}
+
+$('btnConnect').addEventListener('click', function () {
+  if (flashing) return;
+  if (port) { if (!dirty || confirmUnsaved()) disconnect(); } else connect();
+});
+function confirmUnsaved() { return window.confirm(t('unsaved')); }
+function failSave(show) { if (!saveTimer && !show) return; clearTimeout(saveTimer); saveTimer = null; $('btnSave').disabled = false; if (show !== false) msg(t('m_savefail'), true); }
+function verNum(v) { var p = String(v || '0').split('.'); return (+p[0] || 0) * 1000 + (+p[1] || 0); }
+$('diag').addEventListener('toggle', function () { if ($('diag').open) { $('log').textContent = logLines.join('\n'); $('log').scrollTop = 1e9; } });
+$('btnCopy').addEventListener('click', function () {
+  var txt = 'PB600 Setup ' + navigator.userAgent + '\n' + logLines.join('\n');
+  (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () { $('btnCopy').textContent = t('diag_copied'); setTimeout(function () { $('btnCopy').textContent = t('diag_copy'); }, 1500); })
+    .catch(function () { var r = document.createRange(); r.selectNodeContents($('log')); var sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); });
+});
+$('btnSave').addEventListener('click', function () {
+  if (saveTimer) return;
+  msg(t('m_saving')); $('btnSave').disabled = true; send('W');
+  saveTimer = setTimeout(function () { saveTimer = null; failSave(true); }, 4000);
+});
+$('btnReload').addEventListener('click', function () { send('R'); setDirty(false); msg(t('m_reloaded')); });
+$('btnDefaults').addEventListener('click', function () { send('D'); setDirty(true); msg(t('m_defaults')); });
+$('btnCalF').addEventListener('click', function () { send('C F'); setDirty(true); msg(''); });
+$('btnCalR').addEventListener('click', function () { send('C R'); setDirty(true); msg(''); });
+if (hasSerial) navigator.serial.addEventListener('disconnect', function (e) { if (!flashing && port && e.target === port) { disconnect(true); msg(t('m_lost'), true); } });
+window.addEventListener('beforeunload', function (e) { if (flashing || (port && dirty)) { e.preventDefault(); e.returnValue = ''; } });
+status('off'); setDirty(false);
+
+// ---- Firmware aufspielen (esptool-js, nur bei Bedarf geladen) ----
+var FW_DIR = '../firmware/', fwInfo = null;
+function fwMsg(s, err) { var m = $('fwMsg'); m.textContent = s || ''; m.className = 'msg' + (err ? ' err' : ''); }
+function fwProg(p) { $('fwBar').hidden = p < 0; $('fwProg').style.width = Math.max(0, p) + '%'; }
+fetch(FW_DIR + 'version.json', { cache: 'no-store' }).then(function (r) { return r.json(); })
+  .then(function (j) { fwInfo = j; $('fwSrv').textContent = j.version; }).catch(function () { $('fwSrv').textContent = '–'; });
+$('fwDev').textContent = t('fw_unknown');
+if (!hasSerial) $('btnFlash').disabled = true;
+
+async function flash() {
+  if (flashing) return;
+  var mode = document.querySelector('input[name=fwm]:checked').value;
+  if (port && dirty && !window.confirm(t('fw_unsaved'))) return;
+  if (!window.confirm(t('fw_confirm').replace('%s', fwInfo ? fwInfo.version : ''))) return;
+  fwMsg(''); msg('');
+  var p = port || lastPort;
+  if (port) { await disconnect(true); }
+  else {
+    // ohne bestehende Verbindung: Anschluss jetzt wählen (braucht den Klick als Auslöser)
+    try { p = await navigator.serial.requestPort(); } catch (e) { return; }
+  }
+  flashing = true; $('btnFlash').disabled = true; $('btnConnect').disabled = true; fwProg(0);
+  var transport = null, ok = false, stage = 'dl';
+  try {
+    fwMsg(t('fw_dl'));
+    if (!fwInfo) fwInfo = await (await fetch(FW_DIR + 'version.json', { cache: 'no-store' })).json();
+    var file = mode === 'full' ? fwInfo.full : fwInfo.update;
+    var resp = await fetch(FW_DIR + file + '?v=' + encodeURIComponent(fwInfo.version), { cache: 'no-store' });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    var data = new Uint8Array(await resp.arrayBuffer());
+    if (data.length < 65536 || data[0] !== 0xE9 && mode !== 'full') throw new Error('bad image');
+    stage = 'con'; fwMsg(t('fw_con'));
+    var lib = await import('./esptool-bundle.js?v=0.7.1');
+    transport = new lib.Transport(p, false);
+    var term = { clean: function () {}, writeLine: function (s) { console.log('[esptool] ' + s); }, write: function (s) { console.log('[esptool] ' + s); } };
+    var loader = new lib.ESPLoader({ transport: transport, baudrate: 460800, romBaudrate: 115200, terminal: term });
+    await loader.main();
+    stage = 'wr'; fwMsg(t('fw_wr').replace('%s', '0'));
+    await loader.writeFlash({
+      fileArray: [{ data: data, address: mode === 'full' ? 0x0 : 0x10000 }],
+      flashMode: 'keep', flashFreq: 'keep', flashSize: 'keep', eraseAll: false, compress: true,
+      reportProgress: function (i, w, tot) { var pc = Math.round(w / tot * 100); fwProg(pc); fwMsg(t('fw_wr').replace('%s', pc)); }
+    });
+    stage = 'rs'; fwMsg(t('fw_rs'));
+    await loader.after('hard_reset');
+    ok = true;
+  } catch (e) {
+    console.error(e);
+    if (stage === 'dl') fwMsg(t('fw_errdl'), true);
+    else if (stage === 'con') fwMsg(t('fw_errcon'), true);
+    else fwMsg(t('fw_err').replace('%s', (e && e.message) || e), true);
+  }
+  try { if (transport) await transport.disconnect(); } catch (e) {}
+  try { if (p && p.readable) await p.close(); } catch (e) {}
+  flashing = false; $('btnFlash').disabled = false; $('btnConnect').disabled = false;
+  if (ok) {
+    fwProg(100); $('fwDev').textContent = fwInfo.version;
+    fwMsg(t('fw_okre').replace('%s', fwInfo.version));
+    await sleep(1500);
+    await connect(p);
+    fwMsg(t('fw_ok').replace('%s', fwInfo.version));
+  } else fwProg(-1);
+}
+$('btnFlash').addEventListener('click', flash);
+})();
+</script>
+
+</body>
+</html>
